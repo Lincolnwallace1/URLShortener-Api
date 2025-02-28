@@ -37,7 +37,7 @@ class App {
 
     const document = SwaggerModule.createDocument(app, config);
 
-    SwaggerModule.setup('docs', app, document);
+    SwaggerModule.setup('/api/v1/docs', app, document);
 
     await app.listen(this.port).then(() => {
       console.log(`Server running on ${this.port}`);

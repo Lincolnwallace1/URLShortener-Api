@@ -1,17 +1,30 @@
-import { Controller, Body, Post, HttpStatus, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  HttpStatus,
+  Get,
+  Param,
+  HttpCode,
+} from '@nestjs/common';
 
 import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
+import { instanceToInstance } from 'class-transformer';
 
 import ValidationError from '@common/errors/ZodError';
 
-import { ICreateUser, ICreateUserResponse } from './docs';
+import { ICreateUser, ICreateUserResponse, IGetUserResponseDoc } from './docs';
 
 import { CreateUserSchema, CreateUserService } from './useCases/CreateUser';
+import { GetUserService, IGetUserResponse } from './useCases/GetUser';
 
 @ApiTags('Users')
 @Controller('users')
 class UserController {
-  constructor(private readonly createUserService: CreateUserService) {}
+  constructor(
+    private readonly createUserService: CreateUserService,
+    private readonly getUserService: GetUserService,
+  ) {}
 
   @ApiOperation({ summary: 'Create a new user' })
   @HttpCode(HttpStatus.CREATED)
@@ -52,6 +65,33 @@ class UserController {
     return {
       id: user.id,
     };
+  }
+
+  @ApiOperation({ summary: 'Get user by id' })
+  @ApiResponse({
+    description: 'User Found',
+    type: IGetUserResponseDoc,
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    description: 'User not found',
+    status: HttpStatus.NOT_FOUND,
+  })
+  @ApiResponse({
+    description: 'Unauthorized',
+    status: HttpStatus.UNAUTHORIZED,
+  })
+  @ApiResponse({
+    description: 'ThrottlerException: Too Many Requests',
+    status: HttpStatus.TOO_MANY_REQUESTS,
+  })
+  @Get('/:user')
+  public async get(@Param('user') user: string): Promise<IGetUserResponse> {
+    const userRecord = await this.getUserService.execute({
+      user: Number(user),
+    });
+
+    return instanceToInstance(userRecord);
   }
 }
 
