@@ -1,2 +1,2 @@
-export { default as ICreateUser } from './ICreateUser';
-export { default as ICreateUserResponse } from './ICreateUserResponse';
+export { default as ICreateUserDoc } from './ICreateUser';
+export { default as ICreateUserResponseDoc } from './ICreateUserResponse';

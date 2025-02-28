@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class ICreateUserResponse {
+class ICreateUserResponseDoc {
   @ApiProperty()
   id: number;
 }
 
-export default ICreateUserResponse;
+export default ICreateUserResponseDoc;

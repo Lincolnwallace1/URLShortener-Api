@@ -4,6 +4,7 @@ import {
   Post,
   HttpStatus,
   Get,
+  Patch,
   Param,
   HttpCode,
 } from '@nestjs/common';
@@ -13,10 +14,16 @@ import { instanceToInstance } from 'class-transformer';
 
 import ValidationError from '@common/errors/ZodError';
 
-import { ICreateUser, ICreateUserResponse, IGetUserResponseDoc } from './docs';
+import {
+  ICreateUserDoc,
+  ICreateUserResponseDoc,
+  IGetUserResponseDoc,
+  IUpdateUserDoc,
+} from './docs';
 
 import { CreateUserSchema, CreateUserService } from './useCases/CreateUser';
 import { GetUserService, IGetUserResponse } from './useCases/GetUser';
+import { UpdateUserSchema, UpdateUserService } from './useCases/UpdateUser';
 
 @ApiTags('Users')
 @Controller('users')
@@ -24,16 +31,17 @@ class UserController {
   constructor(
     private readonly createUserService: CreateUserService,
     private readonly getUserService: GetUserService,
+    private readonly updateUserService: UpdateUserService,
   ) {}
 
   @ApiOperation({ summary: 'Create a new user' })
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
-    type: ICreateUser,
+    type: ICreateUserDoc,
   })
   @ApiResponse({
     description: 'User Created',
-    type: ICreateUserResponse,
+    type: ICreateUserResponseDoc,
     status: HttpStatus.CREATED,
   })
   @ApiResponse({
@@ -53,7 +61,9 @@ class UserController {
     status: HttpStatus.TOO_MANY_REQUESTS,
   })
   @Post('/')
-  public async create(@Body() data: ICreateUser): Promise<ICreateUserResponse> {
+  public async create(
+    @Body() data: ICreateUserDoc,
+  ): Promise<ICreateUserResponseDoc> {
     const dataParsed = await CreateUserSchema.parseAsync(data).catch(
       (error) => {
         throw new ValidationError(error);
@@ -92,6 +102,48 @@ class UserController {
     });
 
     return instanceToInstance(userRecord);
+  }
+
+  @ApiOperation({ summary: 'Update user by id' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({
+    type: IUpdateUserDoc,
+  })
+  @ApiResponse({
+    description: 'User Updated',
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiResponse({
+    description: 'Validation error',
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiResponse({
+    description: 'User not found',
+    status: HttpStatus.NOT_FOUND,
+  })
+  @ApiResponse({
+    description: 'Unauthorized',
+    status: HttpStatus.UNAUTHORIZED,
+  })
+  @ApiResponse({
+    description: 'ThrottlerException: Too Many Requests',
+    status: HttpStatus.TOO_MANY_REQUESTS,
+  })
+  @Patch('/:user')
+  public async update(
+    @Param('user') user: string,
+    @Body() data: IUpdateUserDoc,
+  ): Promise<void> {
+    const dataParsed = await UpdateUserSchema.parseAsync(data).catch(
+      (error) => {
+        throw new ValidationError(error);
+      },
+    );
+
+    await this.updateUserService.execute({
+      user: Number(user),
+      data: dataParsed,
+    });
   }
 }
 

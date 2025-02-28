@@ -7,6 +7,7 @@ import UserController from './user.controller';
 
 import { CreateUserService } from './useCases/CreateUser';
 import { GetUserService } from './useCases/GetUser';
+import { UpdateUserService } from './useCases/UpdateUser';
 
 @Module({
   imports: [DatabaseModule],
@@ -15,6 +16,7 @@ import { GetUserService } from './useCases/GetUser';
     UserRepository,
     CreateUserService,
     GetUserService,
+    UpdateUserService,
   ],
   controllers: [UserController],
   exports: [UserRepository],

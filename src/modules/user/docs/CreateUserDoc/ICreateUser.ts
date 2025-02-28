@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class ICreateUser {
+class ICreateUserDoc {
   @ApiProperty({ example: 'jondue@gmail.com', required: true })
   email: string;
 
@@ -11,4 +11,4 @@ class ICreateUser {
   password: string;
 }
 
-export default ICreateUser;
+export default ICreateUserDoc;
