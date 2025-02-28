@@ -40,7 +40,7 @@ class ShortenedUrls {
   clickCount: number;
 
   @Exclude()
-  @Column({ type: 'smallint', name: 'user' })
+  @Column({ type: 'smallint', name: 'user', nullable: true })
   user: number;
 
   @ManyToOne(() => User, (user) => user.shortenedUrls)

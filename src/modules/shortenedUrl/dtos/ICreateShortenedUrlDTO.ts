@@ -1,6 +1,6 @@
 interface ICreateShortenedUrlDTO {
   originalUrl: string;
-  shortnedUrl: string;
+  shortenedUrl: string;
   user?: number;
 }
 
