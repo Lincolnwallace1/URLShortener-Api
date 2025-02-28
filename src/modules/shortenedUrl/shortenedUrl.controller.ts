@@ -1,21 +1,37 @@
-import { Controller, Body, Post, HttpStatus, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  HttpStatus,
+  HttpCode,
+  Get,
+  Param,
+} from '@nestjs/common';
 
 import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
+import { instanceToInstance } from 'class-transformer';
 
 import ValidationError from '@common/errors/ZodError';
 
-import { ICreateShortenedUrlDoc, ICreateShortenedUrlResponseDoc } from './docs';
+import {
+  ICreateShortenedUrlDoc,
+  ICreateShortenedUrlResponseDoc,
+  IGetShortenedUrlResponseDoc,
+} from './docs';
 
 import {
   CreateShortenedUrlSchema,
   CreateShortenedUrlService,
 } from './useCases/CreateShortenedUrl';
 
+import { GetShortenedUrlService } from './useCases/GetShortenedUrl';
+
 @ApiTags('ShortenedUrls')
 @Controller('shortenedUrls')
 class ShortenedUrlsController {
   constructor(
     private readonly createShortenedUrlService: CreateShortenedUrlService,
+    private readonly getShortenedUrlService: GetShortenedUrlService,
   ) {}
 
   @ApiOperation({ summary: 'Create a new shortened url' })
@@ -56,7 +72,33 @@ class ShortenedUrlsController {
 
     return {
       id: shortenedUrl.id,
+      shortenedUrl: shortenedUrl.shortenedUrl,
     };
+  }
+
+  @ApiOperation({ summary: 'Get shortenedUrl by shortenedUrl' })
+  @ApiResponse({
+    description: 'ShortenedUrl Found',
+    type: IGetShortenedUrlResponseDoc,
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    description: 'ShortenedUrl not found',
+    status: HttpStatus.NOT_FOUND,
+  })
+  @ApiResponse({
+    description: 'Unauthorized',
+    status: HttpStatus.UNAUTHORIZED,
+  })
+  @Get('/:shortenedUrl')
+  public async get(
+    @Param('shortenedUrl') shortenedUrl: string,
+  ): Promise<IGetShortenedUrlResponseDoc> {
+    const shortenedUrlRecord = await this.getShortenedUrlService.execute({
+      shortenedUrl,
+    });
+
+    return instanceToInstance(shortenedUrlRecord);
   }
 }
 

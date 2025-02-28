@@ -47,6 +47,7 @@ class CreateShortenedUrlService {
 
     return {
       id: shortenedUrl.id,
+      shortenedUrl: shortenedUrl.shortenedUrl,
     };
   }
 }
