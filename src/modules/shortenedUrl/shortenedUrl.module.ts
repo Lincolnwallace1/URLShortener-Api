@@ -9,6 +9,7 @@ import { CreateShortenedUrlService } from './useCases/CreateShortenedUrl';
 import { GetShortenedUrlService } from './useCases/GetShortenedUrl';
 import { UpdateShortenedUrlService } from './useCases/UpdateShortenedUrl';
 import { DeleteShortenedUrlService } from './useCases/DeleteShortenedUrl';
+import { ListShortenedUrlService } from './useCases/ListShortenedUrl';
 
 @Module({
   imports: [DatabaseModule],
@@ -19,6 +20,7 @@ import { DeleteShortenedUrlService } from './useCases/DeleteShortenedUrl';
     GetShortenedUrlService,
     UpdateShortenedUrlService,
     DeleteShortenedUrlService,
+    ListShortenedUrlService,
   ],
   controllers: [ShortenedUrlsController],
   exports: [],

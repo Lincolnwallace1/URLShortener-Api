@@ -20,6 +20,8 @@ import {
   ICreateShortenedUrlResponseDoc,
   IGetShortenedUrlResponseDoc,
   IUpdateShortenetDoc,
+  IListShortenedUrlDoc,
+  IListShortenedUrlResponseDoc,
 } from './docs';
 
 import {
@@ -36,6 +38,10 @@ import {
 
 import { DeleteShortenedUrlService } from './useCases/DeleteShortenedUrl';
 
+import {
+  ListShortenedUrlSchema,
+  ListShortenedUrlService,
+} from './useCases/ListShortenedUrl';
 @ApiTags('ShortenedUrls')
 @Controller('shortenedUrls')
 class ShortenedUrlsController {
@@ -44,6 +50,7 @@ class ShortenedUrlsController {
     private readonly getShortenedUrlService: GetShortenedUrlService,
     private readonly updateShortenedUrlService: UpdateShortenedUrlService,
     private readonly deleteShortenedUrlService: DeleteShortenedUrlService,
+    private readonly listShortenedUrlService: ListShortenedUrlService,
   ) {}
 
   @ApiOperation({ summary: 'Create a new shortened url' })
@@ -176,6 +183,41 @@ class ShortenedUrlsController {
     await this.deleteShortenedUrlService.execute({
       shortenedUrl: Number(shortenedUrl),
     });
+  }
+
+  @ApiOperation({ summary: 'List Shortened Urls ' })
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({
+    type: IListShortenedUrlDoc,
+  })
+  @ApiResponse({
+    description: 'Shortened Urls',
+    type: IListShortenedUrlResponseDoc,
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    description: 'Validation error',
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiResponse({
+    description: 'Unauthorized',
+    status: HttpStatus.UNAUTHORIZED,
+  })
+  @Post('/list')
+  public async list(
+    @Body() data: IListShortenedUrlDoc,
+  ): Promise<IListShortenedUrlResponseDoc> {
+    const dataParsed = await ListShortenedUrlSchema.parseAsync(data).catch(
+      (error) => {
+        throw new ValidationError(error);
+      },
+    );
+
+    const shortenedUrls = await this.listShortenedUrlService.execute({
+      data: dataParsed,
+    });
+
+    return instanceToInstance(shortenedUrls);
   }
 }
 
