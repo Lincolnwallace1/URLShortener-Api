@@ -26,75 +26,84 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+## Installation
 
 ```bash
 $ yarn install
 ```
 
-## Compile and run the project
+### Configuração do Ambiente Local
 
-```bash
-# development
-$ yarn run start
+Para configurar o ambiente corretamente, siga os passos abaixo:
 
-# watch mode
-$ yarn run start:dev
+1. Certifique-se de ter uma imagem Docker do PostgreSQL configurada.
+2. O banco de dados deve ser criado com o nome **shortenedurls**.
+3. Crie um arquivo `.env` na raiz do seu projeto com as seguintes variáveis de ambiente:
 
-# production mode
-$ yarn run start:prod
+```shell
+###################
+# General config
+# V.01
+###################
+
+API_PORT=8080
+API_HOST=http://localhost:8080
+
+###################
+# Database config
+# V.01
+###################
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_DATABASE=shortenedurls
+
+###################
+# Auth config
+# V.01
+###################
+
+AUTH_ACCESS_TOKEN_SECRET=mdasdaasmasp
+AUTH_ACCESS_TOKEN_EXP=1200
 ```
 
-## Run tests
+Em seguida rodar o comando `yarn start:dev` em caso do uso de yarn ou `npm run` em caso de uso de npm.
 
-```bash
-# unit tests
-$ yarn run test
+## Configuração do Projeto em um Container Docker
 
-# e2e tests
-$ yarn run test:e2e
+Para rodar o projeto em um container Docker, siga os passos abaixo:
 
-# test coverage
-$ yarn run test:cov
+1. Certifique-se de ter uma imagem Docker do PostgreSQL configurada com o banco de dados **shortenedurls**.
+2. Crie um arquivo `.env` na raiz do seu projeto com as seguintes variáveis de ambiente (igual ao ambiente local):
+
+```shell
+###################
+# General config
+# V.01
+###################
+
+API_PORT=8080
+API_HOST=http://localhost:8080
+
+###################
+# Database config
+# V.01
+###################
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_DATABASE=shortenedurls
+
+###################
+# Auth config
+# V.01
+###################
+
+AUTH_ACCESS_TOKEN_SECRET=mdasdaasmasp
+AUTH_ACCESS_TOKEN_EXP=1200
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ yarn install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# URLShortener-Api
+ 
