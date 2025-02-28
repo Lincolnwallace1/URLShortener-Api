@@ -8,6 +8,7 @@ import ListShortenedSchema from './ListShortenedUrlSchema';
 import IListShortenedUrlResponse from './IListShortenedUrlResponse';
 
 interface IRequest {
+  user?: number;
   data: Z.infer<typeof ListShortenedSchema>;
 }
 
@@ -17,9 +18,13 @@ class ListShortenedUrlService {
     private shortenedUrlRepository: ShortenedUrlRepository,
   ) {}
 
-  public async execute({ data }: IRequest): Promise<IListShortenedUrlResponse> {
+  public async execute({
+    data,
+    user,
+  }: IRequest): Promise<IListShortenedUrlResponse> {
     const [shortenedUrlRecords, count] = await this.shortenedUrlRepository.list(
       {
+        user,
         dateDeletion: IsNull(),
       },
       [],

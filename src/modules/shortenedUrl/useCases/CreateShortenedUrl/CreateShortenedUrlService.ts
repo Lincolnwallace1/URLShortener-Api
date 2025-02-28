@@ -11,6 +11,7 @@ import CreateShortenedUrlSchema from './CreateShortenedUrlSchema';
 import ICreateShortenedUrlResponse from './ICreateShortenedUrlResponse';
 
 interface IRequest {
+  user?: number;
   data: Z.infer<typeof CreateShortenedUrlSchema>;
 }
 
@@ -21,6 +22,7 @@ class CreateShortenedUrlService {
   ) {}
 
   public async execute({
+    user,
     data,
   }: IRequest): Promise<ICreateShortenedUrlResponse> {
     const hash = uuidv4().substring(0, 6);
@@ -43,6 +45,7 @@ class CreateShortenedUrlService {
     const shortenedUrl = await this.shortenedUrlRepository.create({
       originalUrl: data.url,
       shortenedUrl: shortnedUrl,
+      user: user,
     });
 
     return {

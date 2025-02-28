@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Controller,
   Body,
@@ -8,12 +9,24 @@ import {
   Param,
   Patch,
   Delete,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+
 import { instanceToInstance } from 'class-transformer';
 
 import ValidationError from '@common/errors/ZodError';
+
+import AuthGuard from '@common/middlewares/AuthMiddleware/auth.guard';
+import ShortenedUrlsGuard from './permissions/shortenedUrl.guard';
 
 import {
   ICreateShortenedUrlDoc,
@@ -42,7 +55,9 @@ import {
   ListShortenedUrlSchema,
   ListShortenedUrlService,
 } from './useCases/ListShortenedUrl';
+
 @ApiTags('ShortenedUrls')
+@ApiBearerAuth('Bearer')
 @Controller('shortenedUrls')
 class ShortenedUrlsController {
   constructor(
@@ -53,6 +68,7 @@ class ShortenedUrlsController {
     private readonly listShortenedUrlService: ListShortenedUrlService,
   ) {}
 
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Create a new shortened url' })
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -78,6 +94,7 @@ class ShortenedUrlsController {
   @Post('/')
   public async create(
     @Body() data: ICreateShortenedUrlDoc,
+    @Req() req: Request,
   ): Promise<ICreateShortenedUrlResponseDoc> {
     const dataParsed = await CreateShortenedUrlSchema.parseAsync(data).catch(
       (error) => {
@@ -85,7 +102,10 @@ class ShortenedUrlsController {
       },
     );
 
+    const user = req.headers ? req['user'] : null;
+
     const shortenedUrl = await this.createShortenedUrlService.execute({
+      user,
       data: dataParsed,
     });
 
@@ -120,6 +140,7 @@ class ShortenedUrlsController {
     return instanceToInstance(shortenedUrlRecord);
   }
 
+  @UseGuards(AuthGuard, ShortenedUrlsGuard)
   @ApiOperation({ summary: 'Update shortenedUrl by id' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({
@@ -158,7 +179,8 @@ class ShortenedUrlsController {
     });
   }
 
-  @ApiOperation({ summary: 'Update shortenedUrl by id' })
+  @UseGuards(AuthGuard, ShortenedUrlsGuard)
+  @ApiOperation({ summary: 'Delete shortenedUrl by id' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     description: 'ShortenedUrl Deleted',
@@ -185,6 +207,7 @@ class ShortenedUrlsController {
     });
   }
 
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'List Shortened Urls ' })
   @HttpCode(HttpStatus.OK)
   @ApiBody({
@@ -206,6 +229,7 @@ class ShortenedUrlsController {
   @Post('/list')
   public async list(
     @Body() data: IListShortenedUrlDoc,
+    @Req() req: Request,
   ): Promise<IListShortenedUrlResponseDoc> {
     const dataParsed = await ListShortenedUrlSchema.parseAsync(data).catch(
       (error) => {
@@ -213,7 +237,10 @@ class ShortenedUrlsController {
       },
     );
 
+    const user = req.headers ? req['user'] : null;
+
     const shortenedUrls = await this.listShortenedUrlService.execute({
+      user,
       data: dataParsed,
     });
 
