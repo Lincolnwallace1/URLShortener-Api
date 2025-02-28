@@ -1,24 +1,20 @@
 import { Inject, HttpStatus } from '@nestjs/common';
-import Z from 'zod';
 import { IsNull } from 'typeorm';
 import { AppError } from '@common/errors/AppError';
 
 import ShortenedUrlRepository from '@modules/shortenedUrl/repository/ShortenedUrlRepository';
 
-import UpdateShortenedUrlSchema from './UpdateShortenedUrlSchema';
-
 interface IRequest {
   shortenedUrl: number;
-  data: Z.infer<typeof UpdateShortenedUrlSchema>;
 }
 
-class UpdateShortenedUrlService {
+class DeleteShortenedUrlService {
   constructor(
     @Inject(ShortenedUrlRepository)
     private shortenedUrlRepository: ShortenedUrlRepository,
   ) {}
 
-  public async execute({ shortenedUrl, data }: IRequest): Promise<void> {
+  public async execute({ shortenedUrl }: IRequest): Promise<void> {
     const shortenedUrlRecord = await this.shortenedUrlRepository.get({
       id: shortenedUrl,
       dateDeletion: IsNull(),
@@ -33,9 +29,10 @@ class UpdateShortenedUrlService {
     }
 
     await this.shortenedUrlRepository.update(shortenedUrlRecord.id, {
-      originalUrl: data.url,
+      enabled: false,
+      dateDeletion: new Date(),
     });
   }
 }
 
-export default UpdateShortenedUrlService;
+export default DeleteShortenedUrlService;

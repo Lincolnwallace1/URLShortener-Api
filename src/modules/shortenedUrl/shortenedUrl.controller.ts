@@ -7,6 +7,7 @@ import {
   Get,
   Param,
   Patch,
+  Delete,
 } from '@nestjs/common';
 
 import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
@@ -33,6 +34,8 @@ import {
   UpdateShortenedUrlService,
 } from './useCases/UpdateShortenedUrl';
 
+import { DeleteShortenedUrlService } from './useCases/DeleteShortenedUrl';
+
 @ApiTags('ShortenedUrls')
 @Controller('shortenedUrls')
 class ShortenedUrlsController {
@@ -40,6 +43,7 @@ class ShortenedUrlsController {
     private readonly createShortenedUrlService: CreateShortenedUrlService,
     private readonly getShortenedUrlService: GetShortenedUrlService,
     private readonly updateShortenedUrlService: UpdateShortenedUrlService,
+    private readonly deleteShortenedUrlService: DeleteShortenedUrlService,
   ) {}
 
   @ApiOperation({ summary: 'Create a new shortened url' })
@@ -144,6 +148,33 @@ class ShortenedUrlsController {
     await this.updateShortenedUrlService.execute({
       shortenedUrl: Number(shortenedUrl),
       data: dataParsed,
+    });
+  }
+
+  @ApiOperation({ summary: 'Update shortenedUrl by id' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    description: 'ShortenedUrl Deleted',
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiResponse({
+    description: 'Validation error',
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiResponse({
+    description: 'ShortenedUrl not found',
+    status: HttpStatus.NOT_FOUND,
+  })
+  @ApiResponse({
+    description: 'Unauthorized',
+    status: HttpStatus.UNAUTHORIZED,
+  })
+  @Delete('/:shortenedUrl')
+  public async delete(
+    @Param('shortenedUrl') shortenedUrl: string,
+  ): Promise<void> {
+    await this.deleteShortenedUrlService.execute({
+      shortenedUrl: Number(shortenedUrl),
     });
   }
 }
