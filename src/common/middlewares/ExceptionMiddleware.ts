@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   ExceptionFilter,
   Catch,
@@ -10,7 +8,7 @@ import {
 
 import { Response } from 'express';
 
-import AppError from '@common/errors/AppError';
+import { AppError } from '@common/errors/AppError';
 
 @Catch()
 @Catch()
