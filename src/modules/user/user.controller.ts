@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Get,
   Patch,
+  Delete,
   Param,
   HttpCode,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import {
 import { CreateUserSchema, CreateUserService } from './useCases/CreateUser';
 import { GetUserService, IGetUserResponse } from './useCases/GetUser';
 import { UpdateUserSchema, UpdateUserService } from './useCases/UpdateUser';
+import { DeleteUserService } from './useCases/DeleteUser';
 
 @ApiTags('Users')
 @Controller('users')
@@ -32,6 +34,7 @@ class UserController {
     private readonly createUserService: CreateUserService,
     private readonly getUserService: GetUserService,
     private readonly updateUserService: UpdateUserService,
+    private readonly deleteUserService: DeleteUserService,
   ) {}
 
   @ApiOperation({ summary: 'Create a new user' })
@@ -55,10 +58,6 @@ class UserController {
   @ApiResponse({
     description: 'User already exists',
     status: HttpStatus.CONFLICT,
-  })
-  @ApiResponse({
-    description: 'ThrottlerException: Too Many Requests',
-    status: HttpStatus.TOO_MANY_REQUESTS,
   })
   @Post('/')
   public async create(
@@ -91,10 +90,6 @@ class UserController {
     description: 'Unauthorized',
     status: HttpStatus.UNAUTHORIZED,
   })
-  @ApiResponse({
-    description: 'ThrottlerException: Too Many Requests',
-    status: HttpStatus.TOO_MANY_REQUESTS,
-  })
   @Get('/:user')
   public async get(@Param('user') user: string): Promise<IGetUserResponse> {
     const userRecord = await this.getUserService.execute({
@@ -125,10 +120,6 @@ class UserController {
     description: 'Unauthorized',
     status: HttpStatus.UNAUTHORIZED,
   })
-  @ApiResponse({
-    description: 'ThrottlerException: Too Many Requests',
-    status: HttpStatus.TOO_MANY_REQUESTS,
-  })
   @Patch('/:user')
   public async update(
     @Param('user') user: string,
@@ -144,6 +135,25 @@ class UserController {
       user: Number(user),
       data: dataParsed,
     });
+  }
+
+  @ApiOperation({ summary: 'Delete user by id' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    description: 'User Deleted',
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiResponse({
+    description: 'User not found',
+    status: HttpStatus.NOT_FOUND,
+  })
+  @ApiResponse({
+    description: 'Unauthorized',
+    status: HttpStatus.UNAUTHORIZED,
+  })
+  @Delete('/:user')
+  public async delete(@Param('user') user: string): Promise<void> {
+    await this.deleteUserService.execute({ user: Number(user) });
   }
 }
 
