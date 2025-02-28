@@ -7,6 +7,7 @@ import ShortenedUrlsController from './shortenedUrl.controller';
 
 import { CreateShortenedUrlService } from './useCases/CreateShortenedUrl';
 import { GetShortenedUrlService } from './useCases/GetShortenedUrl';
+import { UpdateShortenedUrlService } from './useCases/UpdateShortenedUrl';
 
 @Module({
   imports: [DatabaseModule],
@@ -15,6 +16,7 @@ import { GetShortenedUrlService } from './useCases/GetShortenedUrl';
     ShortenedUrlRepository,
     CreateShortenedUrlService,
     GetShortenedUrlService,
+    UpdateShortenedUrlService,
   ],
   controllers: [ShortenedUrlsController],
   exports: [],

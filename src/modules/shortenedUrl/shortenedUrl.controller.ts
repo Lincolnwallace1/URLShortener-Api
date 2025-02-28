@@ -6,6 +6,7 @@ import {
   HttpCode,
   Get,
   Param,
+  Patch,
 } from '@nestjs/common';
 
 import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ import {
   ICreateShortenedUrlDoc,
   ICreateShortenedUrlResponseDoc,
   IGetShortenedUrlResponseDoc,
+  IUpdateShortenetDoc,
 } from './docs';
 
 import {
@@ -26,12 +28,18 @@ import {
 
 import { GetShortenedUrlService } from './useCases/GetShortenedUrl';
 
+import {
+  UpdateShortenedUrlSchema,
+  UpdateShortenedUrlService,
+} from './useCases/UpdateShortenedUrl';
+
 @ApiTags('ShortenedUrls')
 @Controller('shortenedUrls')
 class ShortenedUrlsController {
   constructor(
     private readonly createShortenedUrlService: CreateShortenedUrlService,
     private readonly getShortenedUrlService: GetShortenedUrlService,
+    private readonly updateShortenedUrlService: UpdateShortenedUrlService,
   ) {}
 
   @ApiOperation({ summary: 'Create a new shortened url' })
@@ -99,6 +107,44 @@ class ShortenedUrlsController {
     });
 
     return instanceToInstance(shortenedUrlRecord);
+  }
+
+  @ApiOperation({ summary: 'Update shortenedUrl by id' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({
+    type: IUpdateShortenetDoc,
+  })
+  @ApiResponse({
+    description: 'ShortenedUrl Updated',
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiResponse({
+    description: 'Validation error',
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @ApiResponse({
+    description: 'ShortenedUrl not found',
+    status: HttpStatus.NOT_FOUND,
+  })
+  @ApiResponse({
+    description: 'Unauthorized',
+    status: HttpStatus.UNAUTHORIZED,
+  })
+  @Patch('/:shortenedUrl')
+  public async update(
+    @Param('shortenedUrl') shortenedUrl: string,
+    @Body() data: IUpdateShortenetDoc,
+  ): Promise<void> {
+    const dataParsed = await UpdateShortenedUrlSchema.parseAsync(data).catch(
+      (error) => {
+        throw new ValidationError(error);
+      },
+    );
+
+    await this.updateShortenedUrlService.execute({
+      shortenedUrl: Number(shortenedUrl),
+      data: dataParsed,
+    });
   }
 }
 

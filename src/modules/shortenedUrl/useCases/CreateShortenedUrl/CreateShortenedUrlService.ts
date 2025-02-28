@@ -7,11 +7,11 @@ import { AppError } from '@common/errors/AppError';
 
 import ShortenedUrlRepository from '@modules/shortenedUrl/repository/ShortenedUrlRepository';
 
-import ShortenedUrlSchema from './CreateShortenedUrlSchema';
+import CreateShortenedUrlSchema from './CreateShortenedUrlSchema';
 import ICreateShortenedUrlResponse from './ICreateShortenedUrlResponse';
 
 interface IRequest {
-  data: Z.infer<typeof ShortenedUrlSchema>;
+  data: Z.infer<typeof CreateShortenedUrlSchema>;
 }
 
 class CreateShortenedUrlService {
