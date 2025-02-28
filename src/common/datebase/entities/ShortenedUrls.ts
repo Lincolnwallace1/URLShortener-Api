@@ -27,11 +27,11 @@ class ShortenedUrls {
 
   @Column({
     type: 'character varying',
-    name: 'shortnedUrl',
+    name: 'shortenedUrl',
     length: 1024,
     unique: true,
   })
-  shortnedUrl: string;
+  shortenedUrl: string;
 
   @Column({ type: 'timestamp', name: 'dateDeletion', nullable: true })
   dateDeletion: Date;
