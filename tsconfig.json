@@ -25,7 +25,7 @@
         "./src/common/*"
       ],
       "@entities/*": [
-        "./src/common/typeorm/entities/*"
+        "src/common/datebase/entities/*"
       ],
       "@modules/*": [
         "./src/modules/*"
